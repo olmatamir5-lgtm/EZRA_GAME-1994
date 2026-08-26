@@ -1,0 +1,271 @@
+
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>🚀 Sky Multiplier - Virtual Demo</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <h1>🚀 Sky Multiplier</h1>
+
+    <div class="badge">
+        Virtual Credits • Demo Simulation
+    </div>
+
+    <!-- BALANCE -->
+
+    <div class="top-bar">
+
+        <div class="balance-box">
+            💰 Balance:
+            <strong id="balance">1,000.00</strong>
+        </div>
+
+    </div>
+
+
+    <!-- GAME -->
+
+    <div class="panel">
+
+        <div id="gameArea">
+
+            <div id="multiplier">
+                1.00x
+            </div>
+
+            <div id="countdown"></div>
+
+            <div id="plane">
+                ✈️
+            </div>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div id="status">
+            🎮 Game Ready — Place your bet.
+        </div>
+
+
+        <!-- BET CONTROLS -->
+
+        <div class="controls">
+
+            <input
+                id="betAmount"
+                class="bet-input"
+                type="number"
+                min="1"
+                step="1"
+                value="100"
+                placeholder="Bet Amount"
+            >
+
+            <button id="betButton">
+                🟢 BET
+            </button>
+
+            <button id="cashOutButton" disabled>
+                💰 CASH OUT
+            </button>
+
+            <button id="cancelButton" disabled>
+                ❌ CANCEL
+            </button>
+
+            <button id="depositButton">
+                💵 DEPOSIT
+            </button>
+
+        </div>
+
+
+        <!-- EXTRA BUTTONS -->
+
+        <div class="extra-controls">
+
+            <button onclick="halfBet()">
+                ½ BET
+            </button>
+
+            <button onclick="doubleBet()">
+                2× BET
+            </button>
+
+            <button id="soundButton">
+                🔊 SOUND ON
+            </button>
+
+            <button id="resetButton">
+                🔄 RESET
+            </button>
+
+        </div>
+
+
+        <!-- INFO -->
+
+        <div class="info">
+
+            <div class="info-box">
+                📈 Multiplier
+                <br>
+                <strong id="infoMultiplier">
+                    1.00x
+                </strong>
+            </div>
+
+            <div class="info-box">
+                🎮 Game
+                <br>
+                <strong id="gameStatus">
+                    Ready
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- AUTO PLAY -->
+
+        <div class="auto-panel">
+
+            <div class="auto-title">
+                🤖 AUTO PLAY SETTINGS
+            </div>
+
+            <div class="auto-grid">
+
+                <label class="auto-field">
+                    Bet Amount
+
+                    <input
+                        id="autoBetAmount"
+                        type="number"
+                        min="1"
+                        value="50"
+                    >
+                </label>
+
+
+                <label class="auto-field">
+                    Auto Cash Out
+
+                    <input
+                        id="autoCashOut"
+                        type="number"
+                        min="1"
+                        step="0.01"
+                        value="2.00"
+                    >
+                </label>
+
+
+                <label class="auto-field">
+                    Number of Rounds
+
+                    <input
+                        id="autoRounds"
+                        type="number"
+                        min="1"
+                        value="4"
+                    >
+                </label>
+
+
+                <label class="auto-field">
+                    Stop on Loss
+
+                    <span class="check-field">
+
+                        <input
+                            id="stopOnLoss"
+                            type="checkbox"
+                        >
+
+                        ON
+
+                    </span>
+                </label>
+
+
+                <label class="auto-field">
+                    Stop on Profit
+
+                    <input
+                        id="stopOnProfit"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value="0"
+                        placeholder="0 = OFF"
+                    >
+                </label>
+
+            </div>
+
+
+            <div class="extra-controls">
+
+                <button id="autoPlayButton">
+                    ▶️ AUTO PLAY
+                </button>
+
+                <button id="stopAutoButton">
+                    ⏹️ STOP AUTO
+                </button>
+
+            </div>
+
+
+            <div id="autoStatus">
+                🤖 Auto Play: OFF
+            </div>
+
+        </div>
+
+
+        <!-- HISTORY -->
+
+        <div class="history-panel">
+
+            <div class="history-title">
+                📊 GAME HISTORY
+            </div>
+
+            <div id="gameHistory">
+
+                <div class="history-empty">
+                    📜 History: Empty
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- JAVASCRIPT -->
+
+<script src="script.js"></script>
+
+</body>
+</html>
