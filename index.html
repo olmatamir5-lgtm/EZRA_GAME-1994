@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sky Multiplier — Aviator Style</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:#fff;min-height:100vh}
+.app{max-width:900px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+h1{font-size:24px;margin:0}.badge{background:#18213d;padding:8px 12px;border-radius:20px;color:#9ee7ff;font-size:13px}
+.panel{background:#121a31;border:1px solid #253255;border-radius:18px;padding:18px;margin-top:16px}
+.balance{font-size:20px}.balance b{color:#65f3a1}
+.arena{height:430px;position:relative;overflow:hidden;border-radius:16px;background:radial-gradient(circle at 65% 35%,#263d73 0,#16254b 28%,#0d1731 60%,#080d1c 100%);margin-top:14px}
+.grid{position:absolute;inset:0;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:50px 50px;transform:perspective(350px) rotateX(60deg) scale(1.5);transform-origin:bottom}
+.mult{position:absolute;top:25px;left:0;right:0;text-align:center;font-size:62px;font-weight:800;text-shadow:0 5px 25px #000}
+.status{position:absolute;top:100px;left:0;right:0;text-align:center;color:#a9b6d6}
+.plane{
+position:absolute;left:12%;bottom:20%;font-size:55px;
+filter:drop-shadow(0 0 14px #7cecff);
+transition:left .08s linear,bottom .08s linear,transform .08s linear;
+z-index:3;
+animation:engineGlow .35s ease-in-out infinite alternate;
+}
+.plane::after{
+content:"";position:absolute;left:-42px;top:30px;width:58px;height:5px;
+border-radius:10px;background:linear-gradient(90deg,transparent,#7cecff);
+filter:blur(2px);opacity:.85;
+}
+@keyframes engineGlow{
+from{filter:drop-shadow(0 0 8px #52dfff) drop-shadow(0 0 2px #fff)}
+to{filter:drop-shadow(0 0 24px #52dfff) drop-shadow(0 0 7px #fff)}
+}
+.trail{position:absolute;height:4px;background:#68e8ff;transform-origin:left center;border-radius:5px;opacity:.65}
+.controls{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-top:14px}
+input,button{border:0;border-radius:12px;padding:13px;font-size:16px}input{background:#202b49;color:#fff;outline:none}
+button{font-weight:700;cursor:pointer;background:#36d98a;color:#06130d}button:disabled{opacity:.45;cursor:not-allowed}
+.cash{background:#ffd34d;color:#171000}.info{display:flex;justify-content:space-between;color:#a9b6d6;font-size:14px;margin-top:12px}
+.history{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.chip{padding:7px 10px;border-radius:9px;background:#202b49;color:#8fe7ff}
+.note{font-size:12px;color:#7f8cac;margin-top:14px;line-height:1.5}
+@media(max-width:650px){.controls{grid-template-columns:1fr 1fr}.controls button{grid-column:1/-1}.arena{height:360px}.mult{font-size:48px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><h1>🚀 Sky Multiplier</h1><div class="badge">Virtual Coins • Simulation</div></div>
+  <div class="panel">
+    <div class="balance">Balance: <b id="balance">1000</b> 🪙</div>
+    <div class="arena" id="arena">
+      <div class="grid"></div><div class="mult" id="mult">1.00x</div>
+      <div class="status" id="status">Place a virtual bet and start the round.</div>
+      <div class="trail" id="trail"></div><div class="plane" id="plane">✈️</div>
+    </div>
+    <div class="controls">
+      <input id="bet" type="number" min="1" step="1" value="50" placeholder="Virtual bet">
+      <button id="start">START ROUND</button>
+      <button class="cash" id="cash" disabled>CASH OUT</button>
+    </div>
+    <div class="info"><span>Current bet: <b id="currentBet">0</b> 🪙</span><span>Result: <b id="result">—</b></span></div>
+    <div style="margin-top:18px"><strong>Recent crashes</strong><div class="history" id="history"></div></div>
+    <div class="note">This is a standalone game simulation. It uses virtual coins only and has no real-money deposits, withdrawals, or betting.</div>
+  </div>
+</div>
+<script>
+const balanceEl=document.getElementById('balance'),betEl=document.getElementById('bet'),startBtn=document.getElementById('start'),
+cashBtn=document.getElementById('cash'),multEl=document.getElementById('mult'),statusEl=document.getElementById('status'),
+plane=document.getElementById('plane'),trail=document.getElementById('trail'),currentBetEl=document.getElementById('currentBet'),
+resultEl=document.getElementById('result'),historyEl=document.getElementById('history'),arena=document.getElementById('arena');
+
+let balance=1000, running=false, cashed=false, bet=0, multiplier=1, crash=0, startTime=0, raf=0;
+
+function renderBalance(){balanceEl.textContent=balance.toFixed(0)}
+function crashPoint(){
+  // Weighted random simulation; not connected to any real betting system.
+  const u=Math.random();
+  return Math.max(1.01, Math.min(30, 1/(1-u)**0.72));
+}
+function addHistory(x){
+  const chip=document.createElement('span'); chip.className='chip'; chip.textContent=x.toFixed(2)+'x';
+  historyEl.prepend(chip); while(historyEl.children.length>12) historyEl.lastChild.remove();
+}
+function resetPlane(){plane.style.transform='translate(0,0) rotate(-12deg) scale(1)';trail.style.width='0'}
+function finish(text){
+  running=false; cashBtn.disabled=true; startBtn.disabled=false; betEl.disabled=false;
+  statusEl.textContent=text; addHistory(crash); resetPlane();
+}
+function animate(t){
+  if(!running)return;
+  const elapsed=(t-startTime)/1000;
+  multiplier=Math.exp(elapsed*0.13);
+  if(multiplier>=crash){
+    multiplier=crash; multEl.textContent=crash.toFixed(2)+'x'; resultEl.textContent='CRASH';
+    finish('💥 Crashed at '+crash.toFixed(2)+'x'); return;
+  }
+  multEl.textContent=multiplier.toFixed(2)+'x';
+  const p=Math.min(0.82, elapsed/12);
+  const wave=Math.sin(elapsed*3.2)*2.2;
+  const tilt=-12-Math.min(18,elapsed*1.4)+Math.sin(elapsed*4)*2;
+  const scale=1+Math.min(.10,elapsed*.006);
+  plane.style.left=(12+p*62)+'%';
+  plane.style.bottom=(20+p*58+wave)+'%';
+  plane.style.transform=`translate(0,0) rotate(${tilt}deg) scale(${scale})`;
+  const rect=arena.getBoundingClientRect(), x=arena.clientWidth*(0.12+p*0.62), y=arena.clientHeight*(0.80-p*0.58);
+  trail.style.left='12%'; trail.style.top='80%'; trail.style.width=Math.max(0,x-arena.clientWidth*.12)+'px';
+  trail.style.transform=`rotate(${Math.atan2(y-arena.clientHeight*.8,x-arena.clientWidth*.12)}rad)`;
+  raf=requestAnimationFrame(animate);
+}
+startBtn.onclick=()=>{
+  if(running)return;
+  const v=Math.floor(Number(betEl.value));
+  if(!Number.isFinite(v)||v<1){statusEl.textContent='Enter a valid virtual bet.';return}
+  if(v>balance){statusEl.textContent='Not enough virtual coins.';return}
+  balance-=v; renderBalance(); bet=v; currentBetEl.textContent=bet;
+  resultEl.textContent='Flying'; running=true; cashed=false; crash=crashPoint(); multiplier=1;
+  startBtn.disabled=true; cashBtn.disabled=false; betEl.disabled=true; statusEl.textContent='✈️ Flying...';
+  startTime=performance.now(); cancelAnimationFrame(raf); raf=requestAnimationFrame(animate);
+};
+cashBtn.onclick=()=>{
+  if(!running||cashed)return;
+  cashed=true; const payout=Math.floor(bet*multiplier); const profit=payout-bet;
+  balance+=payout; renderBalance(); resultEl.textContent='CASHED OUT';
+  finish('✅ Cashed out at '+multiplier.toFixed(2)+'x • +'+profit+' 🪙');
+};
+renderBalance(); resetPlane();
+</script>
+</body>
+</html>
