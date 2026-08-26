@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 30px;
+}
+
+#game {
+  width: 90%;
+  max-width: 700px;
+  height: 400px;
+  margin: 30px auto;
+  border: 2px solid #555;
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(#222, #111);
+}
+
+#multiplier {
+  font-size: 55px;
+  font-weight: bold;
+  margin-top: 40px;
+}
+
+#plane {
+  position: absolute;
+  left: 20px;
+  bottom: 40px;
+  font-size: 45px;
+}
+
+#start {
+  padding: 15px 35px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
